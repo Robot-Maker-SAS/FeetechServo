@@ -1,7 +1,7 @@
 ﻿/*
  * SCS.h
  * 飞特串行舵机通信层协议程序
- * 日期: 2019.12.18
+ * 日期: 2022.4.2
  * 作者: 
  */
 
@@ -26,9 +26,12 @@ public:
 	int readWord(u8 ID, u8 MemAddr);//读2个字节
 	int Ping(u8 ID);//Ping指令
 	int syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen);//同步读指令包发送
-	int syncReadPacketRx(u8 ID, u8 *nDat);//同步读返回包接收，成功返回内存字节数，失败返回0
+	int syncReadPacketRx(u8 ID, u8 *nDat);//同步读返回包解码，成功返回内存字节数，失败返回0
 	int syncReadRxPacketToByte();//解码一个字节
 	int syncReadRxPacketToWrod(u8 negBit=0);//解码两个字节，negBit为方向为，negBit=0表示无方向
+	void syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut);//同步读开始
+	void syncReadEnd();//同步读结束
+	int Recovery(u8 ID);//恢复舵机参数为默认值
 public:
 	u8 Level;//舵机返回等级
 	u8 End;//处理器大小端结构
@@ -36,9 +39,14 @@ public:
 	u8 syncReadRxPacketIndex;
 	u8 syncReadRxPacketLen;
 	u8 *syncReadRxPacket;
+	u8 *syncReadRxBuff;
+	u16 syncReadRxBuffLen;
+	u16 syncReadRxBuffMax;
+	u32 syncTimeOut;
 protected:
 	virtual int writeSCS(unsigned char *nDat, int nLen) = 0;
 	virtual int readSCS(unsigned char *nDat, int nLen) = 0;
+	virtual int readSCS(unsigned char *nDat, int nLen, unsigned long TimeOut) = 0;
 	virtual int writeSCS(unsigned char bDat) = 0;
 	virtual void rFlushSCS() = 0;
 	virtual void wFlushSCS() = 0;

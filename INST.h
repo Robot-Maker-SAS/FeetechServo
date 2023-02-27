@@ -1,7 +1,7 @@
 /*
  * INST.h
  * 飞特串行舵机协议指令定义
- * 日期: 2021.3.11
+ * 日期: 2022.4.2
  * 作者: 
  */
 
@@ -22,6 +22,7 @@ typedef	long s32;
 #define INST_REG_ACTION 0x05
 #define INST_SYNC_READ 0x82
 #define INST_SYNC_WRITE 0x83
+#define INST_RECOVERY 0x06
 
 //波特率定义
 #define	_1M 0

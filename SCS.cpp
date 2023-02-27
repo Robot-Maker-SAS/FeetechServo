@@ -1,7 +1,7 @@
 ﻿/*
  * SCS.cpp
  * 飞特串行舵机通信层协议程序
- * 日期: 2019.12.18
+ * 日期: 2022.4.2
  * 作者: 
  */
 
@@ -182,6 +182,12 @@ int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen)
 	if(readSCS(bBuf, 3)!=3){
 		return 0;
 	}
+	if(bBuf[0]!=ID && ID!=0xfe){
+		return 0;
+	}
+	if(bBuf[1]!=(nLen+2)){
+		return 0;
+	}
 	int Size = readSCS(nData, nLen);
 	if(Size!=nLen){
 		return 0;
@@ -258,7 +264,7 @@ int	SCS::Ping(u8 ID)
 int SCS::checkHead()
 {
 	u8 bDat;
-	u8 bBuf[2] = {0, 0};
+	u8 bBuf[] = {0, 0};
 	u8 Cnt = 0;
 	while(1){
 		if(!readSCS(&bDat, 1)){
@@ -296,7 +302,7 @@ int	SCS::Ack(u8 ID)
 		}
 		u8 calSum = ~(bBuf[0]+bBuf[1]+bBuf[2]);
 		if(calSum!=bBuf[3]){
-			return 0;			
+			return 0;
 		}
 		Error = bBuf[2];
 	}
@@ -305,6 +311,7 @@ int	SCS::Ack(u8 ID)
 
 int	SCS::syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen)
 {
+	rFlushSCS();
 	syncReadRxPacketLen = nLen;
 	u8 checkSum = (4+0xfe)+IDN+MemAddr+nLen+INST_SYNC_READ;
 	u8 i;
@@ -321,31 +328,62 @@ int	SCS::syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen)
 	}
 	checkSum = ~checkSum;
 	writeSCS(checkSum);
-	return nLen;
+	wFlushSCS();
+	
+	syncReadRxBuffLen = readSCS(syncReadRxBuff, syncReadRxBuffMax, syncTimeOut);
+	return syncReadRxBuffLen;
+}
+
+void SCS::syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut)
+{
+	syncReadRxBuffMax = IDN*(rxLen+6);
+	syncReadRxBuff = new u8[syncReadRxBuffMax];
+	syncTimeOut = TimeOut;
+}
+
+void SCS::syncReadEnd()
+{
+	if(syncReadRxBuff){
+		delete syncReadRxBuff;
+		syncReadRxBuff = NULL;
+	}
 }
 
 int SCS::syncReadPacketRx(u8 ID, u8 *nDat)
 {
+	u16 syncReadRxBuffIndex = 0;
 	syncReadRxPacket = nDat;
 	syncReadRxPacketIndex = 0;
-	u8 bBuf[4];
-	if(!checkHead()){
-		return 0;
+	while((syncReadRxBuffIndex+6+syncReadRxPacketLen)<=syncReadRxBuffLen){
+		u8 bBuf[] = {0, 0, 0};
+		u8 calSum = 0;
+		while(syncReadRxBuffIndex<syncReadRxBuffLen){
+			bBuf[0] = bBuf[1];
+			bBuf[1] = bBuf[2];
+			bBuf[2] = syncReadRxBuff[syncReadRxBuffIndex++];
+			if(bBuf[0]==0xff && bBuf[1]==0xff && bBuf[2]!=0xff){
+				break;
+			}
+		}
+		if(bBuf[2]!=ID){
+			continue;
+		}
+		if(syncReadRxBuff[syncReadRxBuffIndex++]!=(syncReadRxPacketLen+2)){
+			continue;
+		}
+		Error = syncReadRxBuff[syncReadRxBuffIndex++];
+		calSum = ID+(syncReadRxPacketLen+2)+Error;
+		for(u8 i=0; i<syncReadRxPacketLen; i++){
+			syncReadRxPacket[i] = syncReadRxBuff[syncReadRxBuffIndex++];
+			calSum += syncReadRxPacket[i];
+		}
+		calSum = ~calSum;
+		if(calSum!=syncReadRxBuff[syncReadRxBuffIndex++]){
+			return 0;
+		}
+		return syncReadRxPacketLen;
 	}
-	if(readSCS(bBuf, 3)!=3){
-		return 0;
-	}
-	if(bBuf[0]!=ID){
-		return 0;
-	}
-	if(bBuf[1]!=(syncReadRxPacketLen+2)){
-		return 0;
-	}
-	Error = bBuf[2];
-	if(readSCS(nDat, syncReadRxPacketLen)!=syncReadRxPacketLen){
-		return 0;
-	}
-	return syncReadRxPacketLen;
+	return 0;
 }
 
 int SCS::syncReadRxPacketToByte()
@@ -369,4 +407,12 @@ int SCS::syncReadRxPacketToWrod(u8 negBit)
 		}
 	}
 	return Word;
+}
+
+int SCS::Recovery(u8 ID)
+{
+	rFlushSCS();
+	writeBuf(ID, 0, NULL, 0, INST_RECOVERY);
+	wFlushSCS();
+	return Ack(ID);
 }
