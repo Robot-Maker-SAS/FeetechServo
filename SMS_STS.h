@@ -16,12 +16,23 @@
 //-------EPROM(读写)--------
 #define SMS_STS_ID 5
 #define SMS_STS_BAUD_RATE 6
+#define SMS_STS_DELAY_TIME_RETURN 7
+#define SMS_STS_LEVEL_RETURN 8
 #define SMS_STS_MIN_ANGLE_LIMIT_L 9
 #define SMS_STS_MIN_ANGLE_LIMIT_H 10
 #define SMS_STS_MAX_ANGLE_LIMIT_L 11
 #define SMS_STS_MAX_ANGLE_LIMIT_H 12
+#define SMS_STS_MAX_TEMP_LIMIT 13
+#define SMS_STS_MAX_INPUT_VOLT 14
+#define SMS_STS_MIN_INPUT_VOLT 15
+#define SMS_STS_MAX_TORQUE_LIMIT_L 16
+#define SMS_STS_MAX_TORQUE_LIMIT_H 17
+#define SMS_STS_SETTING_BYTE 18
+#define SMS_STS_ALARM_LED 20
 #define SMS_STS_CW_DEAD 26
 #define SMS_STS_CCW_DEAD 27
+#define SMS_STS_OVERLOAD_CURRENT_L 28
+#define SMS_STS_OVERLOAD_CURRENT_H 29
 #define SMS_STS_OFS_L 31
 #define SMS_STS_OFS_H 32
 #define SMS_STS_MODE 33
@@ -54,12 +65,24 @@
 
 #include "SCSerial.h"
 
+enum baud {BAUD_1000000, BAUD_500000, BAUD_250000, BAUD_128000, BAUD_115200, BAUD_76800, BAUD_57600, BAUD_38400, NBBAUD};
+enum mode {POSITION, SPEED, PWM, STEP, NBMODE};
+
 class SMS_STS : public SCSerial
 {
 public:
 	SMS_STS();
 	SMS_STS(u8 End);
 	SMS_STS(u8 End, u8 Level);
+	virtual u8 baudConf(u32 baud);
+	virtual int WriteID(u8 ID, u8 NewID);//写新的舵机ID
+	virtual int WriteBaud(u8 ID, u32 Baud);//写新的舵机波特率
+	virtual int WriteMinAngleLimit(u8 ID, s16 MinAngle);//写新的最小角度值
+	virtual int WriteMaxAngleLimit(u8 ID, s16 MaxAngle);//写新的最大角度值
+	virtual int WriteMinMaxAngleLimit(u8 ID, s16 MinAngle, s16 MaxAngle);
+	virtual int WriteTorqueLimit(u8 ID, u16 TorqueLimit);//写新的最大扭力值
+	virtual int WriteMode(u8 ID, u8 Mode);//写切换模式
+	virtual int WriteOverloadCurrent(u8 ID, u8 Current);//写新的过载电流值
 	virtual int WritePosEx(u8 ID, s16 Position, u16 Speed, u8 ACC = 0);//普通写单个舵机位置指令
 	virtual int RegWritePosEx(u8 ID, s16 Position, u16 Speed, u8 ACC = 0);//异步写单个舵机位置指令(RegWriteAction生效)
 	virtual void SyncWritePosEx(u8 ID[], u8 IDN, s16 Position[], u16 Speed[], u8 ACC[]);//同步写多个舵机位置指令

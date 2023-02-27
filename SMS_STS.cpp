@@ -20,6 +20,128 @@ SMS_STS::SMS_STS(u8 End, u8 Level):SCSerial(End, Level)
 {
 }
 
+u8 SMS_STS::baudConf(u32 baud) {
+	if(baud < 8) return baud;
+	else if(baud < (38400 + 57600) / 2) return BAUD_38400;
+	else if(baud < (57600 + 76800) / 2) return BAUD_57600;
+	else if(baud < (76800 + 115200) / 2) return BAUD_76800;
+	else if(baud < (115200 + 128000) / 2) return BAUD_115200;
+	else if(baud < (128000 + 250000) / 2) return BAUD_128000;
+	else if(baud < (250000 + 500000) / 2) return BAUD_250000;
+	else if(baud < (500000 + 1000000) / 2) return BAUD_500000;
+	else return BAUD_1000000;
+}
+// WriteID: The ID is a value between 0 and 253
+int SMS_STS::WriteID(u8 ID, u8 NewID)
+{
+	unLockEprom(ID);
+	int result = genWrite(ID, SMS_STS_ID, &NewID, 1);
+	LockEprom(NewID);
+	return result;
+}
+
+/* WriteBaud: The baud rate is a value between 0 and 7
+And each value represents a baud rate as follows:
+0 : 1000000
+1 : 500000
+2 : 250000
+3 : 128000
+4 : 115200
+5 : 76800
+6 : 57600
+7 : 38400
+*/
+int SMS_STS::WriteBaud(u8 ID, u32 Baud)
+{
+	u8 baudConfig = baudConf(Baud);
+	unLockEprom(ID);
+	int result = genWrite(ID, SMS_STS_BAUD_RATE, &baudConfig, 1);
+	LockEprom(ID);
+	return result;
+}
+
+// WriteMinAngleLimit: The min angle is a value between -30719 and 30719
+int SMS_STS::WriteMinAngleLimit(u8 ID, s16 MinAngle)
+{
+	if (MinAngle > 30719) MinAngle = 30719;
+	else if (MinAngle < -30719) MinAngle = -30719;
+	unLockEprom(ID);
+	u8 bBuf[2];
+	Host2SCS(bBuf, bBuf+1, MinAngle);
+	int result = genWrite(ID, SMS_STS_MIN_ANGLE_LIMIT_L, bBuf, 2);
+	LockEprom(ID);
+	return result;
+}
+
+// WriteMaxAngle: The max angle is a value between -30719 and 30719
+int SMS_STS::WriteMaxAngleLimit(u8 ID, s16 MaxAngle)
+{
+	if (MaxAngle > 30719) MaxAngle = 30719;
+	else if (MaxAngle < -30719) MaxAngle = -30719;
+	unLockEprom(ID);
+	u8 bBuf[2];
+	Host2SCS(bBuf, bBuf+1, MaxAngle);
+	int result = genWrite(ID, SMS_STS_MAX_ANGLE_LIMIT_L, bBuf, 2);
+	LockEprom(ID);
+	return result;
+}
+
+// WriteMinMaxAngle: The min and max angle are values between -30719 and 30719
+int SMS_STS::WriteMinMaxAngleLimit(u8 ID, s16 MinAngle, s16 MaxAngle)
+{
+	if (MinAngle > 30719) MinAngle = 30719;
+	else if (MinAngle < -30719) MinAngle = -30719;
+	if (MaxAngle > 30719) MaxAngle = 30719;
+	else if (MaxAngle < -30719) MaxAngle = -30719;
+	unLockEprom(ID);
+	u8 bBuf[4];
+	Host2SCS(bBuf, bBuf+1, MinAngle);
+	Host2SCS(bBuf+2, bBuf+3, MaxAngle);
+	int result = genWrite(ID, SMS_STS_MIN_ANGLE_LIMIT_L, bBuf, 4);
+	LockEprom(ID);
+	return result;
+}
+
+// WriteTorqueLimit: Change torque in the SRAM and EPROM, The torque limit is a value between 1 and 1000
+int SMS_STS::WriteTorqueLimit(u8 ID, u16 TorqueLimit)
+{
+	if(TorqueLimit >= 0 && TorqueLimit <= 1000) {
+	    u8 bBuf[2];
+	    Host2SCS(bBuf, bBuf+1, TorqueLimit);
+	    unLockEprom(ID);
+	    int result = genWrite(ID, SMS_STS_MAX_TORQUE_LIMIT_L, bBuf, 2);
+	    LockEprom(ID);
+	    return result;
+	} else {
+	    return -1; // Torque limit out of range
+	}	
+}
+
+/* WriteMode: change control mode. Mode values set as follow:
+0: Position control
+1: Wheel mode / Speed control closed loop speed
+2: PWM mode open loop speed
+3: Step mode
+*/
+int SMS_STS::WriteMode(u8 ID, u8 Mode)
+{
+	unLockEprom(ID);
+	int result = genWrite(ID, SMS_STS_MODE, &Mode, 1);
+	LockEprom(ID);
+	return result;
+}
+
+//WriteOverloadCurrent: Change overload current value between 0 and 255
+int SMS_STS::WriteOverloadCurrent(u8 ID, u8 Current)
+{
+	unLockEprom(ID);
+	u8 bBuf[2];
+	Host2SCS(bBuf, bBuf+1, Current);
+	int result = genWrite(ID, SMS_STS_OVERLOAD_CURRENT_L, bBuf, 2);
+	LockEprom(ID);
+	return result;
+}
+
 int SMS_STS::WritePosEx(u8 ID, s16 Position, u16 Speed, u8 ACC)
 {
 	if(Position<0){
