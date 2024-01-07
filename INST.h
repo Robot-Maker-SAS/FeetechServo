@@ -8,12 +8,15 @@
 #ifndef _INST_H
 #define _INST_H
 
+#ifndef _C_TYPES_H_
+#define _C_TYPES_H_
 typedef	char s8;
 typedef	unsigned char u8;	
 typedef	unsigned short u16;	
 typedef	short s16;
 typedef	unsigned long u32;	
 typedef	long s32;
+#endif
 
 #define INST_PING 0x01
 #define INST_READ 0x02
