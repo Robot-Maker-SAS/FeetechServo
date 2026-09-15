@@ -1,5 +1,5 @@
 /*
-中位校准例子
+Midpoint calibration example
 */
 
 #include <SCServo.h>
@@ -10,8 +10,8 @@ SMS_STS sm_st;
 void setup()
 {
   pinMode(LEDpin, OUTPUT);
-  Serial1.begin(115200);//sms舵机波特率115200
-  //Serial1.begin(1000000);//sts舵机波特率1000000
+  Serial1.begin(115200);//SMS servo baud rate 115200
+  //Serial1.begin(1000000);//STS servo baud rate 1000000
   sm_st.pSerial = &Serial1;
   delay(1000);
 }

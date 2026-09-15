@@ -1,5 +1,5 @@
 /*
-恒速模式例子在STS3215中测试通过，舵机出厂速度单位V=0为停止状态
+Constant speed mode example, tested and passed on the STS3215. A speed unit of V=0 is the stopped state.
 */
 
 #include <SCServo.h>
@@ -12,18 +12,18 @@ void setup()
   st.pSerial = &Serial1;
   delay(1000);
   st.unLockEprom(1);
-  st.WheelMode(1);//恒速模式
+  st.WheelMode(1);//constant speed mode
   st.LockEprom(1);
 }
 
 void loop()
 {
-  st.WriteSpe(1, 3400, 50);//舵机(ID1)以最高速度V=3400步/秒，加速度A=50(50*100步/秒^2)，旋转
+  st.WriteSpe(1, 3400, 50);//servo (ID1) rotates at max speed V=3400 steps/s, acceleration A=50 (50*100 steps/s^2)
   delay(4000);
-  st.WriteSpe(1, 0, 50);//舵机(ID1)以加速度A=50(50*100步/秒^2)，停止旋转(V=0)
+  st.WriteSpe(1, 0, 50);//servo (ID1) stops rotating (V=0) with acceleration A=50 (50*100 steps/s^2)
   delay(2000);
-  st.WriteSpe(1, -3400, 50);//舵机(ID1)以最高速度V=-3400步/秒，加速度A=50(50*100步/秒^2)，反向旋转
+  st.WriteSpe(1, -3400, 50);//servo (ID1) rotates in reverse at max speed V=-3400 steps/s, acceleration A=50 (50*100 steps/s^2)
   delay(4000);
-  st.WriteSpe(1, 0, 50);//舵机(ID1)以加速度A=50(50*100步/秒^2)，停止旋转(V=0)
+  st.WriteSpe(1, 0, 50);//servo (ID1) stops rotating (V=0) with acceleration A=50 (50*100 steps/s^2)
   delay(2000);
 }

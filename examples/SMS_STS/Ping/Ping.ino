@@ -1,5 +1,6 @@
 /*
-Ping指令测试,测试总线上相应ID舵机是否就绪,广播指令只适用于总线只有一个舵机情况
+Ping instruction test: checks whether the servo with the given ID is ready on the bus. The broadcast
+ID only works when there is a single servo on the bus.
 */
 
 #include <SCServo.h>
@@ -12,8 +13,8 @@ void setup()
   pinMode(LEDpin,OUTPUT);
   digitalWrite(LEDpin, HIGH);
   Serial.begin(115200);
-  Serial1.begin(115200);//sms舵机波特率115200
-  //Serial1.begin(1000000);//sts舵机波特率1000000
+  Serial1.begin(115200);//SMS servo baud rate 115200
+  //Serial1.begin(1000000);//STS servo baud rate 1000000
   sms_sts.pSerial = &Serial1;
   delay(1000);
 }

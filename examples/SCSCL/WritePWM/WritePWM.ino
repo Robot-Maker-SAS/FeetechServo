@@ -1,5 +1,5 @@
 /*
-电机模式例子
+Motor (PWM) mode example
 */
 
 #include <SCServo.h>

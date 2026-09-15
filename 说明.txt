@@ -1,24 +1,24 @@
-﻿通信层:SCS
+Communication layer: SCS
 ----------------------------
-硬件接口层:SCSerial
+Hardware interface layer: SCSerial
 ----------------------------
-应用层:SMS_STS SCSCL分别对应飞特三个系列舵机
+Application layer: SMS_STS and SCSCL, corresponding to two of the three Feetech servo series
 
 
 
-SMS_STS sms_sts;//定义SMSBL/SMSCL/STSCL系列舵机
-SCSCL sc;//定义SCSCL系列舵机
+SMS_STS sms_sts;//defines an SMSBL/SMSCL/STSCL series servo
+SCSCL sc;//defines an SCSCL series servo
 
 
 
-INST.h---指令定义头文件
-SCS.h/SCS.cpp---通信层程序
-SCSerial.h/SCSerial.cpp---硬件接口程序
-SMS_STS.h/SMS_STS.cpp---SMSBL/SMSCL/STSCL应用层程序
-SCSCL.h/SCSCL.cpp---SCSCL应用层程序
-(内存表定义于应用层程序头文件SMS_STS.h\SCSCL.h中不同系列舵内存表定义存在差异)
+INST.h---instruction definitions header
+SCS.h/SCS.cpp---communication layer
+SCSerial.h/SCSerial.cpp---hardware interface layer
+SMS_STS.h/SMS_STS.cpp---SMSBL/SMSCL/STSCL application layer
+SCSCL.h/SCSCL.cpp---SCSCL application layer
+(memory table definitions live in the application layer headers SMS_STS.h/SCSCL.h; the memory table differs between servo series)
 
 
-SCS类<---SCSerial类<---SMS_STS类/SCSCL类
+SCS class <--- SCSerial class <--- SMS_STS class / SCSCL class
 
-arduino使用Atmega2560测试
+Arduino tests were done on an Atmega2560

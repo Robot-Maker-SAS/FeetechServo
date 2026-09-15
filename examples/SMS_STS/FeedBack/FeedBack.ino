@@ -1,8 +1,8 @@
 /*
-回读所有舵机反馈参数:位置、速度、负载、电压、温度、移动状态、电流；
-FeedBack函数回读舵机参数于缓冲区，Readxxx(-1)函数返回缓冲区中相应的舵机状态；
-函数Readxxx(ID)，ID=-1返回FeedBack缓冲区参数；ID>=0，通过读指令直接返回指定ID舵机状态,
-无需调用FeedBack函数。
+Read back all servo feedback parameters: position, speed, load, voltage, temperature, moving state, current.
+The FeedBack function reads the servo parameters into a buffer; Readxxx(-1) returns the corresponding
+state from that buffer. For Readxxx(ID): ID=-1 returns the buffered FeedBack value; ID>=0 issues a read
+instruction directly and returns the given servo's state, with no need to call FeedBack first.
 */
 
 #include <SCServo.h>
@@ -14,8 +14,8 @@ void setup()
 {
   pinMode(LEDpin,OUTPUT);
   digitalWrite(LEDpin, HIGH);
-  Serial1.begin(115200);//sms舵机波特率115200
-  //Serial1.begin(1000000);//sts舵机波特率1000000
+  Serial1.begin(115200);//SMS servo baud rate 115200
+  //Serial1.begin(1000000);//STS servo baud rate 1000000
   Serial.begin(115200);
   sms_sts.pSerial = &Serial1;
   delay(1000);

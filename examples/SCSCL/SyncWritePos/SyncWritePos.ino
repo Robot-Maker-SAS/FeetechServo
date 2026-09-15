@@ -1,5 +1,6 @@
 /*
-同步写例子在SCS15中测试通过，如果测试其它型号SCS系列舵机请更改合适的位置、速度与延时参数。
+Sync write example, tested and passed on the SCS15. If testing another SCS series servo model,
+adjust the position, speed, and delay parameters accordingly.
 */
 
 #include <SCServo.h>
@@ -25,13 +26,13 @@ void loop()
   Position[1] = 1000;
   Speed[0] = 1500;
   Speed[1] = 1500;
-  sc.SyncWritePos(ID, 2, Position, 0, Speed);//舵机((ID1/ID2))以最高速度V=1500步/秒,运行至P1=1000
+  sc.SyncWritePos(ID, 2, Position, 0, Speed);//servos (ID1/ID2) move to P1=1000 at max speed V=1500 steps/s
   delay(754);//[(P1-P0)/V]*1000+100
 
   Position[0] = 20;
   Position[1] = 20;
   Speed[0] = 1500;
   Speed[1] = 1500;
-  sc.SyncWritePos(ID, 2, Position, 0, Speed);//舵机((ID1/ID2))以最高速度V=1500步/秒,运行至P1=20
+  sc.SyncWritePos(ID, 2, Position, 0, Speed);//servos (ID1/ID2) move to P1=20 at max speed V=1500 steps/s
   delay(754);//[(P1-P0)/V]*1000+100
 }

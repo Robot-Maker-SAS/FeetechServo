@@ -1,8 +1,8 @@
 ﻿/*
  * SMS_STS.cpp
- * 飞特SMS_STS系列串行舵机应用层程序
- * 日期: 2020.6.17
- * 作者: 
+ * Feetech SMS_STS series serial servo application layer
+ * Date: 2020.6.17
+ * Author:
  */
 
 #include "SMS_STS.h"

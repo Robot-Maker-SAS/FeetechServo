@@ -1,6 +1,6 @@
 /*
-异步写例子在STS3215中测试通过，舵机出厂速度单位为0.0146rpm，舵机机运行速度V=3400
-如果使用的出厂速度单位是0.732rpm，则速度改为V=68，延时公式T=[(P1-P0)/(50*V)]*1000+[(50*V)/(A*100)]*1000
+Async write example, tested and passed on the STS3215. Factory speed unit is 0.0146rpm, servo running speed V=3400.
+If the factory speed unit in use is 0.732rpm instead, change the speed to V=68; delay formula T=[(P1-P0)/(50*V)]*1000+[(50*V)/(A*100)]*1000
 */
 
 #include <SCServo.h>
@@ -17,13 +17,13 @@ void setup()
 
 void loop()
 {
-  st.RegWritePosEx(1, 4095, 3400, 50);//舵机(ID1)以最高速度V=3400步/秒，加速度A=50(50*100步/秒^2)，运行至P1=4095位置
-  st.RegWritePosEx(2, 4095, 3400, 50);//舵机(ID2)以最高速度V=3400步/秒，加速度A=50(50*100步/秒^2)，运行至P1=4095位
+  st.RegWritePosEx(1, 4095, 3400, 50);//servo (ID1) moves to position P1=4095 at max speed V=3400 steps/s, acceleration A=50 (50*100 steps/s^2)
+  st.RegWritePosEx(2, 4095, 3400, 50);//servo (ID2) moves to position P1=4095 at max speed V=3400 steps/s, acceleration A=50 (50*100 steps/s^2)
   st.RegWriteAction();
   delay(1884);//[(P1-P0)/V]*1000+[V/(A*100)]*1000
 
-  st.RegWritePosEx(1, 0, 3400, 50);//舵机(ID1)以最高速度V=3400步/秒，加速度A=50(50*100步/秒^2)，运行至P0=0位置
-  st.RegWritePosEx(2, 0, 3400, 50);//舵机(ID2)以最高速度V=3400步/秒，加速度A=50(50*100步/秒^2)，运行至P1=0位置
+  st.RegWritePosEx(1, 0, 3400, 50);//servo (ID1) moves to position P0=0 at max speed V=3400 steps/s, acceleration A=50 (50*100 steps/s^2)
+  st.RegWritePosEx(2, 0, 3400, 50);//servo (ID2) moves to position P0=0 at max speed V=3400 steps/s, acceleration A=50 (50*100 steps/s^2)
   st.RegWriteAction();
   delay(1884);//[(P1-P0)/V]*1000+[V/(A*100)]*1000
 }

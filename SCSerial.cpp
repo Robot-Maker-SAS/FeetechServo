@@ -1,8 +1,8 @@
 /*
  * SCSerial.h
- * 飞特串行舵机硬件接口层程序
- * 日期: 2022.5.24
- * 作者: 
+ * Feetech serial servo hardware interface layer
+ * Date: 2022.5.24
+ * Author:
  */
 
 #include "SCSerial.h"

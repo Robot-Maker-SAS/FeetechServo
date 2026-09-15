@@ -1,8 +1,8 @@
-﻿/*
+/*
  * SCS.h
- * 飞特串行舵机通信层协议程序
- * 日期: 2022.4.2
- * 作者: 
+ * Feetech serial servo communication layer protocol
+ * Date: 2022.4.2
+ * Author:
  */
 
 #ifndef _SCS_H
@@ -15,27 +15,27 @@ public:
 	SCS();
 	SCS(u8 End);
 	SCS(u8 End, u8 Level);
-	int genWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen);//普通写指令
-	int regWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen);//异步写指令
-	int RegWriteAction(u8 ID = 0xfe);//异步写执行指令
-	void syncWrite(u8 ID[], u8 IDN, u8 MemAddr, u8 *nDat, u8 nLen);//同步写指令
-	int writeByte(u8 ID, u8 MemAddr, u8 bDat);//写1个字节
-	int writeWord(u8 ID, u8 MemAddr, u16 wDat);//写2个字节
-	int Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen);//读指令
-	int readByte(u8 ID, u8 MemAddr);//读1个字节
-	int readWord(u8 ID, u8 MemAddr);//读2个字节
-	int Ping(u8 ID);//Ping指令
-	int syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen);//同步读指令包发送
-	int syncReadPacketRx(u8 ID, u8 *nDat);//同步读返回包解码，成功返回内存字节数，失败返回0
-	int syncReadRxPacketToByte();//解码一个字节
-	int syncReadRxPacketToWrod(u8 negBit=0);//解码两个字节，negBit为方向为，negBit=0表示无方向
-	void syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut);//同步读开始
-	void syncReadEnd();//同步读结束
-	int Recovery(u8 ID);//恢复舵机参数为默认值
+	int genWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen);//normal write instruction
+	int regWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen);//async (registered) write instruction
+	int RegWriteAction(u8 ID = 0xfe);//async write action instruction (triggers pending regWrite)
+	void syncWrite(u8 ID[], u8 IDN, u8 MemAddr, u8 *nDat, u8 nLen);//sync write instruction
+	int writeByte(u8 ID, u8 MemAddr, u8 bDat);//write 1 byte
+	int writeWord(u8 ID, u8 MemAddr, u16 wDat);//write 2 bytes
+	int Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen);//read instruction
+	int readByte(u8 ID, u8 MemAddr);//read 1 byte
+	int readWord(u8 ID, u8 MemAddr);//read 2 bytes
+	int Ping(u8 ID);//ping instruction
+	int syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen);//send sync read instruction packet
+	int syncReadPacketRx(u8 ID, u8 *nDat);//decode sync read response packet; returns byte count read on success, 0 on failure
+	int syncReadRxPacketToByte();//decode one byte
+	int syncReadRxPacketToWrod(u8 negBit=0);//decode two bytes; negBit is the sign bit position, 0 means unsigned
+	void syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut);//begin sync read
+	void syncReadEnd();//end sync read
+	int Recovery(u8 ID);//restore servo parameters to factory defaults
 public:
-	u8 Level;//舵机返回等级
-	u8 End;//处理器大小端结构
-	u8 Error;//舵机状态
+	u8 Level;//servo response level
+	u8 End;//processor endianness
+	u8 Error;//servo state
 	u8 syncReadRxPacketIndex;
 	u8 syncReadRxPacketLen;
 	u8 *syncReadRxPacket;
@@ -52,9 +52,9 @@ protected:
 	virtual void wFlushSCS() = 0;
 protected:
 	void writeBuf(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen, u8 Fun);
-	void Host2SCS(u8 *DataL, u8* DataH, u16 Data);//1个16位数拆分为2个8位数
-	u16	SCS2Host(u8 DataL, u8 DataH);//2个8位数组合为1个16位数
-	int	Ack(u8 ID);//返回应答
-	int checkHead();//帧头检测
+	void Host2SCS(u8 *DataL, u8* DataH, u16 Data);//split one 16-bit value into two 8-bit values
+	u16	SCS2Host(u8 DataL, u8 DataH);//combine two 8-bit values into one 16-bit value
+	int	Ack(u8 ID);//read the acknowledgement response
+	int checkHead();//check for the frame header
 };
 #endif

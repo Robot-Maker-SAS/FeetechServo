@@ -1,8 +1,8 @@
 /*
  * INST.h
- * 飞特串行舵机协议指令定义
- * 日期: 2022.4.2
- * 作者: 
+ * Feetech serial servo protocol instruction definitions
+ * Date: 2022.4.2
+ * Author:
  */
 
 #ifndef _INST_H
@@ -11,10 +11,10 @@
 #ifndef _C_TYPES_H_
 #define _C_TYPES_H_
 typedef	char s8;
-typedef	unsigned char u8;	
-typedef	unsigned short u16;	
+typedef	unsigned char u8;
+typedef	unsigned short u16;
 typedef	short s16;
-typedef	unsigned long u32;	
+typedef	unsigned long u32;
 typedef	long s32;
 #endif
 
@@ -27,7 +27,7 @@ typedef	long s32;
 #define INST_SYNC_WRITE 0x83
 #define INST_RECOVERY 0x06
 
-//波特率定义
+// Baud rate definitions
 #define	_1M 0
 #define	_0_5M 1
 #define	_250K 2

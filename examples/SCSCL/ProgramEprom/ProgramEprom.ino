@@ -1,5 +1,5 @@
 /*
-舵机参数编程
+Servo parameter programming
 */
 
 #include <SCServo.h>
@@ -14,11 +14,11 @@ void setup()
   sc.pSerial = &Serial1;
   delay(1000);
   digitalWrite(LEDpin, LOW);
-  sc.unLockEprom(1);//打开EPROM保存功能
+  sc.unLockEprom(1);//enable EPROM save
   sc.writeByte(1, SCSCL_ID, 2);//ID
   sc.writeWord(2, SCSCL_MIN_ANGLE_LIMIT_L, 20);
   sc.writeWord(2, SCSCL_MAX_ANGLE_LIMIT_L, 1000);
-  sc.LockEprom(2);////关闭EPROM保存功能
+  sc.LockEprom(2);////disable EPROM save
   digitalWrite(LEDpin, HIGH);
 }
 

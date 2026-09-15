@@ -1,8 +1,8 @@
 /*
  * SCServo.h
- * 飞特串行舵机接口
- * 日期: 2021.3.11
- * 作者: 
+ * Feetech serial servo interface
+ * Date: 2021.3.11
+ * Author:
  */
 
 #ifndef _SCSERVO_H

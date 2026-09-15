@@ -1,8 +1,8 @@
 ﻿/*
  * SCSCL.cpp
- * 飞特SCSCL系列串行舵机应用层程序
- * 日期: 2020.6.17
- * 作者: 
+ * Feetech SCSCL series serial servo application layer
+ * Date: 2020.6.17
+ * Author:
  */
 
 #include "SCSCL.h"

@@ -1,8 +1,8 @@
-﻿/*
+/*
  * SCS.cpp
- * 飞特串行舵机通信层协议程序
- * 日期: 2022.4.2
- * 作者: 
+ * Feetech serial servo communication layer protocol
+ * Date: 2022.4.2
+ * Author:
  */
 
 #include <stddef.h>
@@ -10,7 +10,7 @@
 
 SCS::SCS()
 {
-	Level = 1;//除广播指令所有指令返回应答
+	Level = 1;//all instructions except broadcast return a response
 	Error = 0;
 }
 
@@ -28,8 +28,8 @@ SCS::SCS(u8 End, u8 Level)
 	Error = 0;
 }
 
-//1个16位数拆分为2个8位数
-//DataL为低位，DataH为高位
+// Split one 16-bit value into two 8-bit values
+// DataL is the low byte, DataH is the high byte
 void SCS::Host2SCS(u8 *DataL, u8* DataH, u16 Data)
 {
 	if(End){
@@ -41,8 +41,8 @@ void SCS::Host2SCS(u8 *DataL, u8* DataH, u16 Data)
 	}
 }
 
-//2个8位数组合为1个16位数
-//DataL为低位，DataH为高位
+// Combine two 8-bit values into one 16-bit value
+// DataL is the low byte, DataH is the high byte
 u16 SCS::SCS2Host(u8 DataL, u8 DataH)
 {
 	u16 Data;
@@ -72,7 +72,7 @@ void SCS::writeBuf(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen, u8 Fun)
 		bBuf[3] = msgLen;
 		bBuf[5] = MemAddr;
 		writeSCS(bBuf, 6);
-		
+
 	}else{
 		bBuf[3] = msgLen;
 		writeSCS(bBuf, 5);
@@ -88,8 +88,8 @@ void SCS::writeBuf(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen, u8 Fun)
 	writeSCS(~CheckSum);
 }
 
-//普通写指令
-//舵机ID，MemAddr内存表地址，写入数据，写入长度
+// Normal write instruction
+// Servo ID, MemAddr memory table address, write data, write length
 int SCS::genWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen)
 {
 	rFlushSCS();
@@ -98,8 +98,8 @@ int SCS::genWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen)
 	return Ack(ID);
 }
 
-//异步写指令
-//舵机ID，MemAddr内存表地址，写入数据，写入长度
+// Async (registered) write instruction
+// Servo ID, MemAddr memory table address, write data, write length
 int SCS::regWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen)
 {
 	rFlushSCS();
@@ -108,8 +108,8 @@ int SCS::regWrite(u8 ID, u8 MemAddr, u8 *nDat, u8 nLen)
 	return Ack(ID);
 }
 
-//异步写执行指令
-//舵机ID
+// Async write action instruction (triggers pending regWrite)
+// Servo ID
 int SCS::RegWriteAction(u8 ID)
 {
 	rFlushSCS();
@@ -118,8 +118,8 @@ int SCS::RegWriteAction(u8 ID)
 	return Ack(ID);
 }
 
-//同步写指令
-//舵机ID[]数组，IDN数组长度，MemAddr内存表地址，写入数据，写入长度
+// Sync write instruction
+// Servo ID[] array, IDN array length, MemAddr memory table address, write data, write length
 void SCS::syncWrite(u8 ID[], u8 IDN, u8 MemAddr, u8 *nDat, u8 nLen)
 {
 	rFlushSCS();
@@ -167,8 +167,8 @@ int SCS::writeWord(u8 ID, u8 MemAddr, u16 wDat)
 	return Ack(ID);
 }
 
-//读指令
-//舵机ID，MemAddr内存表地址，返回数据nData，数据长度nLen
+// Read instruction
+// Servo ID, MemAddr memory table address, returned data nData, data length nLen
 int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen)
 {
 	rFlushSCS();
@@ -208,7 +208,7 @@ int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen)
 	return Size;
 }
 
-//读1字节，超时返回-1
+// Read 1 byte; returns -1 on timeout
 int SCS::readByte(u8 ID, u8 MemAddr)
 {
 	u8 bDat;
@@ -220,9 +220,9 @@ int SCS::readByte(u8 ID, u8 MemAddr)
 	}
 }
 
-//读2字节，超时返回-1
+// Read 2 bytes; returns -1 on timeout
 int SCS::readWord(u8 ID, u8 MemAddr)
-{	
+{
 	u8 nDat[2];
 	int Size;
 	u16 wDat;
@@ -233,7 +233,7 @@ int SCS::readWord(u8 ID, u8 MemAddr)
 	return wDat;
 }
 
-//Ping指令，返回舵机ID，超时返回-1
+// Ping instruction; returns the servo ID, -1 on timeout
 int	SCS::Ping(u8 ID)
 {
 	rFlushSCS();
@@ -255,7 +255,7 @@ int	SCS::Ping(u8 ID)
 	}
 	u8 calSum = ~(bBuf[0]+bBuf[1]+bBuf[2]);
 	if(calSum!=bBuf[3]){
-		return -1;			
+		return -1;
 	}
 	Error = bBuf[2];
 	return bBuf[0];
@@ -329,7 +329,7 @@ int	SCS::syncReadPacketTx(u8 ID[], u8 IDN, u8 MemAddr, u8 nLen)
 	checkSum = ~checkSum;
 	writeSCS(checkSum);
 	wFlushSCS();
-	
+
 	syncReadRxBuffLen = readSCS(syncReadRxBuff, syncReadRxBuffMax, syncTimeOut);
 	return syncReadRxBuffLen;
 }
