@@ -32,10 +32,15 @@ public:
 	void syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut);//begin sync read
 	void syncReadEnd();//end sync read
 	int Recovery(u8 ID);//restore servo parameters to factory defaults
+	int Reset(u8 ID);//reset servo state
+	int Recal(u8 ID);//recalibrate servo midpoint
+	u8 getState() { return u8Status; }//servo state (alarm byte)
+	u8 getLastError() { return u8Error; }//last communication error code (SCS_ERR_LIST)
 public:
 	u8 Level;//servo response level
 	u8 End;//processor endianness
-	u8 Error;//servo state
+	u8 u8Status;//servo state (alarm byte, formerly the Error field)
+	u8 u8Error;//communication error code (SCS_ERR_LIST)
 	u8 syncReadRxPacketIndex;
 	u8 syncReadRxPacketLen;
 	u8 *syncReadRxPacket;

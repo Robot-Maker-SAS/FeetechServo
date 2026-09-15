@@ -18,6 +18,14 @@ typedef	unsigned long u32;
 typedef	long s32;
 #endif
 
+enum SCS_ERR_LIST
+{
+	ERR_NO_REPLY = 1,
+	ERR_CRC_CMP  = 2,
+	ERR_SLAVE_ID = 3,
+	ERR_BUFF_LEN = 4,
+};
+
 #define INST_PING 0x01
 #define INST_READ 0x02
 #define INST_WRITE 0x03
@@ -26,6 +34,8 @@ typedef	long s32;
 #define INST_SYNC_READ 0x82
 #define INST_SYNC_WRITE 0x83
 #define INST_RECOVERY 0x06
+#define INST_RESET 0x0A
+#define INST_CAL 0x0B
 
 // Baud rate definitions
 #define	_1M 0

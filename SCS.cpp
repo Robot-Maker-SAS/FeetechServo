@@ -11,21 +11,21 @@
 SCS::SCS()
 {
 	Level = 1;//all instructions except broadcast return a response
-	Error = 0;
+	u8Status = 0;
 }
 
 SCS::SCS(u8 End)
 {
 	Level = 1;
 	this->End = End;
-	Error = 0;
+	u8Status = 0;
 }
 
 SCS::SCS(u8 End, u8 Level)
 {
 	this->Level = Level;
 	this->End = End;
-	Error = 0;
+	u8Status = 0;
 }
 
 // Split one 16-bit value into two 8-bit values
@@ -174,25 +174,32 @@ int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen)
 	rFlushSCS();
 	writeBuf(ID, MemAddr, &nLen, 1, INST_READ);
 	wFlushSCS();
+	u8Error = 0;
 	if(!checkHead()){
+		u8Error = ERR_NO_REPLY;
 		return 0;
 	}
 	u8 bBuf[4];
-	Error = 0;
+	u8Status = 0;
 	if(readSCS(bBuf, 3)!=3){
+		u8Error = ERR_NO_REPLY;
 		return 0;
 	}
 	if(bBuf[0]!=ID && ID!=0xfe){
+		u8Error = ERR_SLAVE_ID;
 		return 0;
 	}
 	if(bBuf[1]!=(nLen+2)){
+		u8Error = ERR_BUFF_LEN;
 		return 0;
 	}
 	int Size = readSCS(nData, nLen);
 	if(Size!=nLen){
+		u8Error = ERR_NO_REPLY;
 		return 0;
 	}
 	if(readSCS(bBuf+3, 1)!=1){
+		u8Error = ERR_NO_REPLY;
 		return 0;
 	}
 	u8 calSum = bBuf[0]+bBuf[1]+bBuf[2];
@@ -202,9 +209,10 @@ int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen)
 	}
 	calSum = ~calSum;
 	if(calSum!=bBuf[3]){
+		u8Error = ERR_CRC_CMP;
 		return 0;
 	}
-	Error = bBuf[2];
+	u8Status = bBuf[2];
 	return Size;
 }
 
@@ -239,25 +247,31 @@ int	SCS::Ping(u8 ID)
 	rFlushSCS();
 	writeBuf(ID, 0, NULL, 0, INST_PING);
 	wFlushSCS();
-	Error = 0;
+	u8Status = 0;
 	if(!checkHead()){
+		u8Error = ERR_NO_REPLY;
 		return -1;
 	}
 	u8 bBuf[4];
+	u8Error = 0;
 	if(readSCS(bBuf, 4)!=4){
+		u8Error = ERR_NO_REPLY;
 		return -1;
 	}
 	if(bBuf[0]!=ID && ID!=0xfe){
+		u8Error = ERR_SLAVE_ID;
 		return -1;
 	}
 	if(bBuf[1]!=2){
+		u8Error = ERR_BUFF_LEN;
 		return -1;
 	}
 	u8 calSum = ~(bBuf[0]+bBuf[1]+bBuf[2]);
 	if(calSum!=bBuf[3]){
+		u8Error = ERR_CRC_CMP;
 		return -1;
 	}
-	Error = bBuf[2];
+	u8Status = bBuf[2];
 	return bBuf[0];
 }
 
@@ -285,26 +299,32 @@ int SCS::checkHead()
 
 int	SCS::Ack(u8 ID)
 {
-	Error = 0;
+	u8Error = 0;
 	if(ID!=0xfe && Level){
 		if(!checkHead()){
+			u8Error = ERR_NO_REPLY;
 			return 0;
 		}
+		u8Status = 0;
 		u8 bBuf[4];
 		if(readSCS(bBuf, 4)!=4){
+			u8Error = ERR_NO_REPLY;
 			return 0;
 		}
 		if(bBuf[0]!=ID){
+			u8Error = ERR_SLAVE_ID;
 			return 0;
 		}
 		if(bBuf[1]!=2){
+			u8Error = ERR_BUFF_LEN;
 			return 0;
 		}
 		u8 calSum = ~(bBuf[0]+bBuf[1]+bBuf[2]);
 		if(calSum!=bBuf[3]){
+			u8Error = ERR_CRC_CMP;
 			return 0;
 		}
-		Error = bBuf[2];
+		u8Status = bBuf[2];
 	}
 	return 1;
 }
@@ -354,6 +374,7 @@ int SCS::syncReadPacketRx(u8 ID, u8 *nDat)
 	u16 syncReadRxBuffIndex = 0;
 	syncReadRxPacket = nDat;
 	syncReadRxPacketIndex = 0;
+	u8Error = 0;
 	while((syncReadRxBuffIndex+6+syncReadRxPacketLen)<=syncReadRxBuffLen){
 		u8 bBuf[] = {0, 0, 0};
 		u8 calSum = 0;
@@ -371,14 +392,15 @@ int SCS::syncReadPacketRx(u8 ID, u8 *nDat)
 		if(syncReadRxBuff[syncReadRxBuffIndex++]!=(syncReadRxPacketLen+2)){
 			continue;
 		}
-		Error = syncReadRxBuff[syncReadRxBuffIndex++];
-		calSum = ID+(syncReadRxPacketLen+2)+Error;
+		u8Status = syncReadRxBuff[syncReadRxBuffIndex++];
+		calSum = ID+(syncReadRxPacketLen+2)+u8Status;
 		for(u8 i=0; i<syncReadRxPacketLen; i++){
 			syncReadRxPacket[i] = syncReadRxBuff[syncReadRxBuffIndex++];
 			calSum += syncReadRxPacket[i];
 		}
 		calSum = ~calSum;
 		if(calSum!=syncReadRxBuff[syncReadRxBuffIndex++]){
+			u8Error = ERR_CRC_CMP;
 			return 0;
 		}
 		return syncReadRxPacketLen;
@@ -389,6 +411,7 @@ int SCS::syncReadPacketRx(u8 ID, u8 *nDat)
 int SCS::syncReadRxPacketToByte()
 {
 	if(syncReadRxPacketIndex>=syncReadRxPacketLen){
+		u8Error = ERR_BUFF_LEN;
 		return -1;
 	}
 	return syncReadRxPacket[syncReadRxPacketIndex++];
@@ -397,6 +420,7 @@ int SCS::syncReadRxPacketToByte()
 int SCS::syncReadRxPacketToWrod(u8 negBit)
 {
 	if((syncReadRxPacketIndex+1)>=syncReadRxPacketLen){
+		u8Error = ERR_BUFF_LEN;
 		return -1;
 	}
 	int Word = SCS2Host(syncReadRxPacket[syncReadRxPacketIndex], syncReadRxPacket[syncReadRxPacketIndex+1]);
@@ -413,6 +437,22 @@ int SCS::Recovery(u8 ID)
 {
 	rFlushSCS();
 	writeBuf(ID, 0, NULL, 0, INST_RECOVERY);
+	wFlushSCS();
+	return Ack(ID);
+}
+
+int SCS::Reset(u8 ID)
+{
+	rFlushSCS();
+	writeBuf(ID, 0, NULL, 0, INST_RESET);
+	wFlushSCS();
+	return Ack(ID);
+}
+
+int SCS::Recal(u8 ID)
+{
+	rFlushSCS();
+	writeBuf(ID, 0, NULL, 0, INST_CAL);
 	wFlushSCS();
 	return Ack(ID);
 }
