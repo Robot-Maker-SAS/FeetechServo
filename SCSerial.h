@@ -22,6 +22,8 @@ public:
 	SCSerial();
 	SCSerial(u8 End);
 	SCSerial(u8 End, u8 Level);
+	int readByteRetry(u8 ID, u8 MemAddr, u8 Retry = 5, u32 DelayMs = 10);//retries readByte up to Retry times, waiting DelayMs between attempts, until it stops returning -1
+	int readWordRetry(u8 ID, u8 MemAddr, u8 Retry = 5, u32 DelayMs = 10);//retries readWord up to Retry times, waiting DelayMs between attempts, until it stops returning -1
 
 protected:
 	int writeSCS(unsigned char *nDat, int nLen);//output nLen bytes

@@ -47,6 +47,7 @@
 #define SCSCL_PRESENT_CURRENT_H 70
 
 #include "SCSerial.h"
+#include "ServoStatus.h"
 
 class SCSCL : public SCSerial
 {
@@ -63,6 +64,7 @@ public:
 	virtual int unLockEprom(u8 ID);//unlock EEPROM
 	virtual int LockEprom(u8 ID);//lock EEPROM
 	virtual int FeedBack(int ID);//read back servo feedback info
+	virtual bool ReadStatus(u8 ID, ServoStatus &status);//FeedBack + every Readxxx(-1) in one call
 	virtual int ReadPos(int ID);//read position
 	virtual int ReadSpeed(int ID);//read speed
 	virtual int ReadLoad(int ID);//read output-to-motor voltage percentage (0~1000)

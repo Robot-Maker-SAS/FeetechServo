@@ -156,6 +156,21 @@ int HLSCL::FeedBack(int ID)
 	return nLen;
 }
 
+bool HLSCL::ReadStatus(u8 ID, ServoStatus &status)
+{
+	if(FeedBack(ID)==-1){
+		return false;
+	}
+	status.Position = ReadPos(-1);
+	status.Speed = ReadSpeed(-1);
+	status.Load = ReadLoad(-1);
+	status.Voltage = ReadVoltage(-1);
+	status.Temper = ReadTemper(-1);
+	status.Move = ReadMove(-1);
+	status.Current = ReadCurrent(-1);
+	return true;
+}
+
 int HLSCL::ReadPos(int ID)
 {
 	int Pos = -1;

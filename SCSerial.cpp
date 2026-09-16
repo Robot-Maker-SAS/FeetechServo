@@ -97,3 +97,33 @@ void SCSerial::rFlushSCS()
 void SCSerial::wFlushSCS()
 {
 }
+
+int SCSerial::readByteRetry(u8 ID, u8 MemAddr, u8 Retry, u32 DelayMs)
+{
+	int result;
+	for(u8 i=0; i<Retry; i++){
+		result = readByte(ID, MemAddr);
+		if(result!=-1){
+			return result;
+		}
+		if(DelayMs){
+			delay(DelayMs);
+		}
+	}
+	return -1;
+}
+
+int SCSerial::readWordRetry(u8 ID, u8 MemAddr, u8 Retry, u32 DelayMs)
+{
+	int result;
+	for(u8 i=0; i<Retry; i++){
+		result = readWord(ID, MemAddr);
+		if(result!=-1){
+			return result;
+		}
+		if(DelayMs){
+			delay(DelayMs);
+		}
+	}
+	return -1;
+}

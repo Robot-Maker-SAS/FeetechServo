@@ -54,6 +54,7 @@
 #define HLSCL_PRESENT_CURRENT_H 70
 
 #include "SCSerial.h"
+#include "ServoStatus.h"
 
 class HLSCL : public SCSerial
 {
@@ -75,6 +76,7 @@ public:
 	int LockEprom(u8 ID);//lock EEPROM
 	int CalibrationOfs(u8 ID);//midpoint calibration
 	int FeedBack(int ID);//read back servo feedback info
+	bool ReadStatus(u8 ID, ServoStatus &status);//FeedBack + every Readxxx(-1) in one call
 	int ReadPos(int ID);//read position
 	int ReadSpeed(int ID);//read speed
 	int ReadLoad(int ID);//read output-to-motor voltage percentage (0~1000)
