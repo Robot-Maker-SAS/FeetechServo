@@ -2,12 +2,13 @@ Communication layer: SCS
 ----------------------------
 Hardware interface layer: SCSerial
 ----------------------------
-Application layer: SMS_STS and SCSCL, corresponding to two of the three Feetech servo series
+Application layer: SMS_STS, SCSCL and HLSCL, one per Feetech servo series
 
 
 
 SMS_STS sms_sts;//defines an SMSBL/SMSCL/STSCL series servo
 SCSCL sc;//defines an SCSCL series servo
+HLSCL hlscl;//defines an HTS/HLS series servo
 
 
 
@@ -16,9 +17,11 @@ SCS.h/SCS.cpp---communication layer
 SCSerial.h/SCSerial.cpp---hardware interface layer
 SMS_STS.h/SMS_STS.cpp---SMSBL/SMSCL/STSCL application layer
 SCSCL.h/SCSCL.cpp---SCSCL application layer
-(memory table definitions live in the application layer headers SMS_STS.h/SCSCL.h; the memory table differs between servo series)
+HLSCL.h/HLSCL.cpp---HTS/HLS application layer
+ServoStatus.h---shared status struct (position/speed/load/voltage/temperature/moving state/current), filled by each application layer's ReadStatus() in one call
+(memory table definitions live in the application layer headers SMS_STS.h/SCSCL.h/HLSCL.h; the memory table differs between servo series)
 
 
-SCS class <--- SCSerial class <--- SMS_STS class / SCSCL class
+SCS class <--- SCSerial class <--- SMS_STS class / SCSCL class / HLSCL class
 
 Arduino tests were done on an Atmega2560
