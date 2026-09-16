@@ -234,12 +234,13 @@ int SMS_STS::WriteSpe(u8 ID, s16 Speed, u8 ACC)
 		Speed = -Speed;
 		Speed |= (1<<15);
 	}
-	u8 bBuf[2];
+	u8 bBuf[7];
 	bBuf[0] = ACC;
-	genWrite(ID, SMS_STS_ACC, bBuf, 1);
-	Host2SCS(bBuf+0, bBuf+1, Speed);
-	
-	return genWrite(ID, SMS_STS_GOAL_SPEED_L, bBuf, 2);
+	Host2SCS(bBuf+1, bBuf+2, 0);
+	Host2SCS(bBuf+3, bBuf+4, 0);
+	Host2SCS(bBuf+5, bBuf+6, Speed);
+
+	return genWrite(ID, SMS_STS_ACC, bBuf, 7);
 }
 
 int SMS_STS::EnableTorque(u8 ID, u8 Enable)
