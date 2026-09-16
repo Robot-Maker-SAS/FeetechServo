@@ -32,7 +32,7 @@ protected:
 	void wFlushSCS();//
 public:
 	unsigned long IOTimeOut;//I/O timeout
-	HardwareSerial *pSerial;//serial port pointer
+	Stream *pSerial;//serial port pointer — Stream rather than HardwareSerial, so a SoftwareSerial (or any other Stream) works too
 	int Err;
 public:
 	virtual int getErr(){  return Err;  }

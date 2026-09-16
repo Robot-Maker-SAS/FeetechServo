@@ -364,7 +364,7 @@ void SCS::syncReadBegin(u8 IDN, u8 rxLen, u32 TimeOut)
 void SCS::syncReadEnd()
 {
 	if(syncReadRxBuff){
-		delete syncReadRxBuff;
+		delete[] syncReadRxBuff;
 		syncReadRxBuff = NULL;
 	}
 }
