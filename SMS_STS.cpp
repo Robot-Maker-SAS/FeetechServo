@@ -198,6 +198,26 @@ void SMS_STS::SyncWritePosEx(u8 ID[], u8 IDN, s16 Position[], u16 Speed[], u8 AC
     syncWrite(ID, IDN, SMS_STS_ACC, offbuf, 7);
 }
 
+void SMS_STS::SyncWriteSpe(u8 ID[], u8 IDN, s16 Speed[], u8 ACC[])
+{
+    u8 offbuf[7*IDN];
+    for(u8 i = 0; i<IDN; i++){
+		if(Speed[i]<0){
+			Speed[i] = -Speed[i];
+			Speed[i] |= (1<<15);
+		}
+		if(ACC){
+			offbuf[i*7] = ACC[i];
+		}else{
+			offbuf[i*7] = 0;
+		}
+        Host2SCS(offbuf+i*7+1, offbuf+i*7+2, 0);
+        Host2SCS(offbuf+i*7+3, offbuf+i*7+4, 0);
+        Host2SCS(offbuf+i*7+5, offbuf+i*7+6, Speed[i]);
+    }
+    syncWrite(ID, IDN, SMS_STS_ACC, offbuf, 7);
+}
+
 int SMS_STS::WheelMode(u8 ID)
 {
 	return writeByte(ID, SMS_STS_MODE, 1);		

@@ -87,6 +87,7 @@ public:
 	virtual int WritePosEx(u8 ID, s16 Position, u16 Speed, u8 ACC = 0);//normal write: single servo position instruction
 	virtual int RegWritePosEx(u8 ID, s16 Position, u16 Speed, u8 ACC = 0);//async write: single servo position instruction (takes effect on RegWriteAction)
 	virtual void SyncWritePosEx(u8 ID[], u8 IDN, s16 Position[], u16 Speed[], u8 ACC[]);//sync write: multiple servo positions instruction
+	virtual void SyncWriteSpe(u8 ID[], u8 IDN, s16 Speed[], u8 ACC[]);//sync write: multiple servo speeds instruction
 	virtual int WheelMode(u8 ID);//constant speed mode
 	virtual int JoinMode(u8 ID);//servo (position) mode
 	virtual int WriteSpe(u8 ID, s16 Speed, u8 ACC = 0);//constant speed mode control instruction
