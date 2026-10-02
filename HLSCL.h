@@ -49,6 +49,8 @@
 #define HLSCL_PRESENT_LOAD_H 61
 #define HLSCL_PRESENT_VOLTAGE 62
 #define HLSCL_PRESENT_TEMPERATURE 63
+#define HLSCL_SYNC_WRITE_FLAG 64
+#define HLSCL_HARDWARE_ERROR 65
 #define HLSCL_MOVING 66
 #define HLSCL_PRESENT_CURRENT_L 69
 #define HLSCL_PRESENT_CURRENT_H 70
@@ -84,6 +86,7 @@ public:
 	int ReadTemper(int ID);//read temperature
 	int ReadMove(int ID);//read moving state
 	int ReadCurrent(int ID);//read current
+	int ReadHardwareError(int ID);//read hardware error/alarm bitfield
 private:
 	u8 Mem[HLSCL_PRESENT_CURRENT_H-HLSCL_PRESENT_POSITION_L+1];
 };

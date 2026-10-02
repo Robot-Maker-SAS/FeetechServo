@@ -122,6 +122,7 @@ bool SCSCL::ReadStatus(u8 ID, ServoStatus &status)
 	status.Temper = ReadTemper(-1);
 	status.Move = ReadMove(-1);
 	status.Current = ReadCurrent(-1);
+	status.HardwareError = ReadHardwareError(-1);
 	return true;
 }
 
@@ -226,6 +227,21 @@ int SCSCL::ReadMove(int ID)
 		}
 	}
 	return Move;
+}
+
+int SCSCL::ReadHardwareError(int ID)
+{
+	int Error = -1;
+	if(ID==-1){
+		Error = Mem[SCSCL_HARDWARE_ERROR-SCSCL_PRESENT_POSITION_L];
+	}else{
+		Err = 0;
+		Error = readByte(ID, SCSCL_HARDWARE_ERROR);
+		if(Error==-1){
+			Err = 1;
+		}
+	}
+	return Error;
 }
 
 int SCSCL::ReadCurrent(int ID)

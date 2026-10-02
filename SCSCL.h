@@ -42,6 +42,8 @@
 #define SCSCL_PRESENT_LOAD_H 61
 #define SCSCL_PRESENT_VOLTAGE 62
 #define SCSCL_PRESENT_TEMPERATURE 63
+#define SCSCL_SYNC_WRITE_FLAG 64
+#define SCSCL_HARDWARE_ERROR 65
 #define SCSCL_MOVING 66
 #define SCSCL_PRESENT_CURRENT_L 69
 #define SCSCL_PRESENT_CURRENT_H 70
@@ -72,6 +74,7 @@ public:
 	virtual int ReadTemper(int ID);//read temperature
 	virtual int ReadMove(int ID);//read moving state
 	virtual int ReadCurrent(int ID);//read current
+	virtual int ReadHardwareError(int ID);//read hardware error/alarm bitfield
 private:
 	u8 Mem[SCSCL_PRESENT_CURRENT_H-SCSCL_PRESENT_POSITION_L+1];
 };

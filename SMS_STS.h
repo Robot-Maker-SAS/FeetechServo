@@ -59,6 +59,8 @@
 #define SMS_STS_PRESENT_LOAD_H 61
 #define SMS_STS_PRESENT_VOLTAGE 62
 #define SMS_STS_PRESENT_TEMPERATURE 63
+#define SMS_STS_SYNC_WRITE_FLAG 64
+#define SMS_STS_HARDWARE_ERROR 65
 #define SMS_STS_MOVING 66
 #define SMS_STS_PRESENT_CURRENT_L 69
 #define SMS_STS_PRESENT_CURRENT_H 70
@@ -104,6 +106,7 @@ public:
 	virtual int ReadTemper(int ID);//read temperature
 	virtual int ReadMove(int ID);//read moving state
 	virtual int ReadCurrent(int ID);//read current
+	virtual int ReadHardwareError(int ID);//read hardware error/alarm bitfield
 private:
 	u8 Mem[SMS_STS_PRESENT_CURRENT_H-SMS_STS_PRESENT_POSITION_L+1];
 };

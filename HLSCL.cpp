@@ -168,6 +168,7 @@ bool HLSCL::ReadStatus(u8 ID, ServoStatus &status)
 	status.Temper = ReadTemper(-1);
 	status.Move = ReadMove(-1);
 	status.Current = ReadCurrent(-1);
+	status.HardwareError = ReadHardwareError(-1);
 	return true;
 }
 
@@ -251,6 +252,17 @@ int HLSCL::ReadMove(int ID)
 		Move = readByte(ID, HLSCL_MOVING);
 	}
 	return Move;
+}
+
+int HLSCL::ReadHardwareError(int ID)
+{
+	int Error = -1;
+	if(ID==-1){
+		Error = Mem[HLSCL_HARDWARE_ERROR-HLSCL_PRESENT_POSITION_L];
+	}else{
+		Error = readByte(ID, HLSCL_HARDWARE_ERROR);
+	}
+	return Error;
 }
 
 int HLSCL::ReadCurrent(int ID)

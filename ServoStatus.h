@@ -18,6 +18,7 @@ struct ServoStatus {
 	int Temper;
 	int Move;
 	int Current;
+	int HardwareError;
 };
 
 #endif

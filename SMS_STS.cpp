@@ -286,6 +286,7 @@ bool SMS_STS::ReadStatus(u8 ID, ServoStatus &status)
 	status.Temper = ReadTemper(-1);
 	status.Move = ReadMove(-1);
 	status.Current = ReadCurrent(-1);
+	status.HardwareError = ReadHardwareError(-1);
 	return true;
 }
 
@@ -394,6 +395,21 @@ int SMS_STS::ReadMove(int ID)
 		}
 	}
 	return Move;
+}
+
+int SMS_STS::ReadHardwareError(int ID)
+{
+	int Error = -1;
+	if(ID==-1){
+		Error = Mem[SMS_STS_HARDWARE_ERROR-SMS_STS_PRESENT_POSITION_L];
+	}else{
+		Err = 0;
+		Error = readByte(ID, SMS_STS_HARDWARE_ERROR);
+		if(Error==-1){
+			Err = 1;
+		}
+	}
+	return Error;
 }
 
 int SMS_STS::ReadCurrent(int ID)
