@@ -60,6 +60,7 @@ public:
 	virtual int WritePos(u8 ID, u16 Position, u16 Time, u16 Speed = 0);//normal write: single servo position instruction
 	virtual int RegWritePos(u8 ID, u16 Position, u16 Time, u16 Speed = 0);//async write: single servo position instruction (takes effect on RegWriteAction)
 	virtual void SyncWritePos(u8 ID[], u8 IDN, u16 Position[], u16 Time[], u16 Speed[]);//sync write: multiple servo positions instruction
+	virtual int ServoMode(u8 ID, u16 MinAngle = 0, u16 MaxAngle = 1023);//servo (position) mode: sets the angle limits, 0 to 1023 by default
 	virtual int PWMMode(u8 ID);//PWM output mode
 	virtual int WritePWM(u8 ID, s16 pwmOut);//PWM output mode instruction
 	virtual int EnableTorque(u8 ID, u8 Enable);//torque control instruction

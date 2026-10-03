@@ -62,6 +62,14 @@ void SCSCL::SyncWritePos(u8 ID[], u8 IDN, u16 Position[], u16 Time[], u16 Speed[
     syncWrite(ID, IDN, SCSCL_GOAL_POSITION_L, offbuf, 6);
 }
 
+int SCSCL::ServoMode(u8 ID, u16 MinAngle, u16 MaxAngle)
+{
+	u8 bBuf[4];
+	Host2SCS(bBuf+0, bBuf+1, MinAngle);
+	Host2SCS(bBuf+2, bBuf+3, MaxAngle);
+	return genWrite(ID, SCSCL_MIN_ANGLE_LIMIT_L, bBuf, 4);
+}
+
 int SCSCL::PWMMode(u8 ID)
 {
 	u8 bBuf[4];
